@@ -326,54 +326,61 @@ async function changeQuote() {
 
 async function addFriend() {
     if (!currentProfileId) {
-        setStatus('Error: No profile is selected.', true)
-        return
+        setStatus("Please select a profile first.", true);
+        return;
     }
-    const friendName = document.getElementById('input-friend').value.trim()
+
+    const friendInput = document.getElementById('input-friend');
+    const friendName = friendInput.value.trim();
+
     if (!friendName) {
-        setStatus('Error: Friend name field is empty.', true)
-        return
+        setStatus("Please enter a friend's name.", true);
+        return;
     }
+
     try {
-        const { data: found, error: findError } = await db
+        const { data: targetProfile, error: lookupError } = await db
             .from('profiles')
             .select('id, name')
             .ilike('name', friendName)
-            .limit(1)
+            .single();
 
-        if (findError) throw findError
-
-        if (found.length === 0) {
-            setStatus(`Error: No profile named "${friendName}" exists. Add that profile first.`, true)
-            return
+        if (lookupError) {
+            if (lookupError.code === 'PGRST116') {
+                setStatus(`Could not find a profile named "${friendName}".`, true);
+                return;
+            }
+            throw lookupError;
         }
 
-        const friendId = found[0].id
+        const targetFriendId = targetProfile.id;
 
-        if (friendId === currentProfileId) {
-            setStatus('Error: A profile cannot be friends with itself.', true)
-            return
+        if (targetFriendId === currentProfileId) {
+            setStatus("You cannot add yourself as a friend.", true);
+            return;
         }
 
         const { error: insertError } = await db
             .from('friends')
-            .insert({ profile_id: currentProfileId, friend_id: friendId })
-            
+            .insert([
+                { profile_id: currentProfileId, friend_id: targetFriendId }
+            ]);
+
         if (insertError) {
             if (insertError.code === '23505') {
-                setStatus(`"${friendName}" is already in the friends list.`, true)
-            } else {
-                throw insertError
+                setStatus(`${targetProfile.name} is already on your friends list.`, true);
+                return;
             }
-            return
+            throw insertError;
         }
 
-        document.getElementById('input-friend').value = ''
-        await selectProfile(currentProfileId)
-        setStatus(`"${found[0].name}" added as a friend.`)
+        friendInput.value = '';
+        setStatus(`Successfully added ${targetProfile.name} as a friend!`);
+        
+        selectProfile(currentProfileId); 
 
     } catch (err) {
-        setStatus(`Error adding friend: ${err.message}`, true)
+        setStatus(`Error adding friend: ${err.message}`, true);
     }
 }
 
@@ -433,7 +440,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ── Right panel buttons ────────────────────────────────────────
     document.getElementById('btn-status').addEventListener('click', changeStatus)
     document.getElementById('btn-picture').addEventListener('click', changePicture)
-    document.getElementById('btn-add-friend').addEventListener('click', addFriend)
+    document.getElementById('btn-add-friend').addEventListener('click', addFriend);
     document.getElementById('btn-remove-friend').addEventListener('click', removeFriend)
     document.getElementById('btn-quote').addEventListener('click', changeQuote);
 
