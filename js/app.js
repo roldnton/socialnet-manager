@@ -276,7 +276,7 @@ async function changePicture() {
         const { error } = await db
             .from('profiles')
             .update({ picture: newPicture })
-            .eq('id', currentProfileId)
+            .eq('id', currentProfileId)``
 
         if (error) throw error
         
@@ -435,6 +435,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('btn-picture').addEventListener('click', changePicture)
     document.getElementById('btn-add-friend').addEventListener('click', addFriend)
     document.getElementById('btn-remove-friend').addEventListener('click', removeFriend)
+    document.getElementById('btn-quote').addEventListener('click', changeQuote);
 
     // ── Enter key shortcuts ────────────────────────────────────────
     document.getElementById('input-name').addEventListener('keydown', e => { 
