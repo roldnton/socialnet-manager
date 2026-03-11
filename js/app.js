@@ -111,14 +111,30 @@ async function selectProfile(profileId) {
 
         if (profileError) throw profileError
 
-        const { data: friends, error: friendsError } = await db
+        const { data: friendConnections, error: friendsError } = await db
             .from('friends')
             .select('profile_id, friend_id')
             .or(`profile_id.eq.${profileId},friend_id.eq.${profileId}`)
 
         if (friendsError) throw friendsError
         
-        displayProfile(profile, friends)
+        const friendIds = friendConnections.map(f => 
+            f.profile_id === profileId ? f.friend_id : f.profile_id
+        )
+
+        let friendProfiles = []
+        if (friendIds.length > 0) {
+            const { data: namesData, error: namesError } = await db
+                .from('profiles')
+                .select('name')
+                .in('id', friendIds)
+                
+            if (namesError) throw namesError
+            friendProfiles = namesData
+        }
+        
+        displayProfile(profile, friendProfiles)
+        
     } catch (err) {
         setStatus(`Error selecting profile: ${err.message}`, true)
     }
