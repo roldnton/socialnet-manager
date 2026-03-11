@@ -29,9 +29,7 @@ html, body {
     scroll-behavior: smooth;
     font-family: var(--font-body);
     background-color: var(--clr-page-bg);
-    height: 100vh;
     margin: 0;
-    overflow: hidden; /* Prevents whole page scrolling; panels will scroll instead */
 }
 
 /* Typography Overrides */
