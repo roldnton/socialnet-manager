@@ -288,6 +288,38 @@ async function changePicture() {
     }
 }
 
+async function changeQuote() {
+    if (!currentProfileId) {
+        setStatus("Please select a profile first.", true);
+        return;
+    }
+
+    const quoteInput = document.getElementById('input-quote');
+    const newQuote = quoteInput.value.trim();
+
+    if (!newQuote) {
+        setStatus("Please enter a quote.", true);
+        return;
+    }
+
+    try {
+        const { error } = await db
+            .from('profiles')
+            .update({ quote: newQuote })
+            .eq('id', currentProfileId);
+
+        if (error) throw error;
+
+        // Update the UI in the center panel instantly
+        document.getElementById('profile-quote').innerHTML = `<em>"${newQuote}"</em>`;
+        quoteInput.value = ''; // Clear the input box
+        setStatus("Quote updated successfully.");
+        
+    } catch (err) {
+        setStatus(`Error updating quote: ${err.message}`, true);
+    }
+}
+
 // ================================================================
 // Section 5: Friends Management
 // ================================================================
@@ -428,22 +460,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         profileItems.forEach(item => {
             const name = item.textContent.toLowerCase()
-            // If the name includes what we typed, show it. Otherwise, hide it.
             if (name.includes(searchTerm)) {
-                item.style.display = '' // Restores it to its normal visible state
+                item.style.display = ''
             } else {
-                item.style.display = 'none' // Hides it completely
+                item.style.display = 'none'
             }
         })
     })
 
-    // Pressing Enter will now automatically select the top visible result!
     document.getElementById('input-lookup').addEventListener('keydown', e => { 
         if (e.key === 'Enter') {
-            // Find the first profile in the list that isn't hidden
             const firstVisibleProfile = document.querySelector('#profile-list .profile-item:not([style*="display: none"])')
             if (firstVisibleProfile) {
-                firstVisibleProfile.click() // Simulate a click on it
+                firstVisibleProfile.click()
             } else {
                 setStatus('No matching profiles found to select.', true)
             }

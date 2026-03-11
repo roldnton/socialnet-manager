@@ -24,81 +24,91 @@
     </header>
 
     <div id="app-wrapper">
-        <main class="container-fluid flex-grow-1 py-3">
+<main class="container-fluid flex-grow-1 py-3">
             <div class="row g-3 h-100">
                 
-                <div class="col-12 col-md-4">
-                    <div class="sn-panel">
+                <div class="col-12 col-md-4 d-flex flex-column">
+                    <div class="sn-panel d-flex flex-column h-100">
                         <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">Profile Management</h6>
                         
-                        <label for="input-name" class="form-label fw-semibold small">Name</label>
-                        <div class="input-group mb-2">
+                        <label for="input-name" class="form-label fw-semibold small mb-1">Add New Profile</label>
+                        <div class="input-group mb-3 shadow-sm">
                             <input type="text" id="input-name" class="form-control form-control-sm" placeholder="Enter full name">
-                            <button id="btn-add" class="btn btn-primary btn-sm">Add</button>
+                            <button id="btn-add" class="btn btn-primary btn-sm px-3">Add</button>
                         </div>
                         
-                        <div class="input-group mb-2">
-                            <input type="text" id="input-lookup" class="form-control sn-input mb-2" placeholder="Enter profile name" />
+                        <label for="input-lookup" class="form-label fw-semibold small mb-1">Search Profiles</label>
+                        <div class="input-group mb-3 shadow-sm">
+                            <input type="text" id="input-lookup" class="form-control form-control-sm" placeholder="Filter by name...">
+                            <button id="btn-lookup" class="btn btn-outline-secondary btn-sm px-3">Search</button>
                         </div>
                         
-                        <button id="btn-delete" class="btn btn-danger btn-sm w-100 mb-3">
+                        <p class="small fw-semibold text-muted mb-1 mt-2">All Profiles</p>
+                        <div id="profile-list" class="profile-list-box mb-3 shadow-sm flex-grow-1"></div>
+                        
+                        <button id="btn-delete" class="btn btn-danger btn-sm w-100 shadow-sm fw-bold">
                             Delete Selected Profile
                         </button>
-                        
-                        <p class="small fw-semibold text-muted mb-1">Profiles</p>
-                        <div id="profile-list" class="profile-list-box"></div>
-                        
-                        </div>
-                </div>
-                
-                <div class="col-12 col-md-4">
-                    <div class="sn-panel text-center">
-                        <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">Profile Information</h6>
-                            
-                        <img id="profile-pic" src="resources/images/default.png" alt="Profile picture" class="profile-thumb" />
-                        
-                        <h4 id="profile-name" class="profile-hero-name">No Profile Selected</h4>
-                        
-                        <div id="profile-status" class="sn-textbox mb-3">&mdash;</div>
-                        
-                        <div id="profile-quote" class="sn-textbox mb-3">&mdash;</div>
-                        
-                        <p class="small fw-semibold text-start text-muted mb-1">Friends</p>
-                        <div id="friends-list" class="sn-textbox sn-textbox--tall"></div>
-                        
-                        </div>
-                </div>
-                
-                <div class="col-12 col-md-4">
-                    <div class="sn-panel">
-                        <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">Edit Profile</h6>
-                        
-                        <label class="form-label fw-semibold small">Change Status</label>
-                        <div class="input-group mb-3">
-                            <input type="text" id="input-status" class="form-control form-control-sm" placeholder="New status message">
-                            <button id="btn-status" class="btn btn-primary btn-sm">Change</button>
-                        </div>
-                        
-                        <label class="form-label fw-semibold small">Change Picture</label>
-                        <div class="input-group mb-3">
-                            <input type="text" id="input-picture" class="form-control form-control-sm" placeholder="e.g. resources/ada.png">
-                            <button id="btn-picture" class="btn sn-btn-blue w-100 mb-3">Update Picture</button>
-                        </div>
-                        
-                        <label class="form-label fw-semibold small">Add Friend</label>
-                        <div class="input-group mb-3">
-                            <input type="text" id="input-friend" class="form-control sn-input mb-2">
-                            <button id="btn-add-friend" class="btn sn-btn-green flex-grow-1">Add Friend</button>
-                        </div>
-                        
-                        <label class="form-label fw-semibold small">Remove Friend</label>
-                        <div class="input-group mb-3">
-                            <input type="text" id="input-remove-friend" class="form-control sn-input mb-2" placeholder="Friend's full name">
-                            <button id="btn-remove-friend" class="btn sn-btn-orange flex-grow-1">Remove</button>
-                        </div>
                     </div>
                 </div>
-            </div></main>
+                
+                <div class="col-12 col-md-4 d-flex flex-column">
+                    <div class="sn-panel text-center h-100 d-flex flex-column">
+                        <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">Profile Information</h6>
+                            
+                        <img id="profile-pic" src="resources/images/default.png" alt="Profile picture" class="profile-thumb mt-2" />
+                        
+                        <h4 id="profile-name" class="profile-hero-name mt-3 mb-1">No Profile Selected</h4>
+                        
+                        <div id="profile-status" class="sn-textbox mb-2 text-muted fst-italic shadow-sm">&mdash;</div>
+                        <div id="profile-quote" class="sn-textbox mb-4 shadow-sm fw-medium">&mdash;</div>
+                        
+                        <p class="small fw-semibold text-start text-muted mb-1">Friends List</p>
+                        <div id="friends-list" class="sn-textbox sn-textbox--tall text-start shadow-sm flex-grow-1"></div>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-4 d-flex flex-column">
+                    <div class="sn-panel h-100 d-flex flex-column">
+                        <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">Edit Profile</h6>
+                        
+                        <label class="form-label fw-semibold small mb-1">Change Status</label>
+                        <div class="input-group mb-4 shadow-sm">
+                            <input type="text" id="input-status" class="form-control form-control-sm" placeholder="New status message">
+                            <button id="btn-status" class="btn btn-primary btn-sm px-3">Update</button>
+                        </div>
+                        
+                        <label class="form-label fw-semibold small mb-1">Change Picture</label>
+                        <div class="input-group mb-4 shadow-sm">
+                            <input type="text" id="input-picture" class="form-control form-control-sm" placeholder="e.g. resources/ada.png">
+                            <button id="btn-picture" class="btn btn-info text-white btn-sm px-3">Update</button>
+                        </div>
+                        
+                        <label class="form-label fw-semibold small mb-1">Change Quote</label>
+                        <div class="input-group mb-4 shadow-sm">
+                            <input type="text" id="input-quote" class="form-control form-control-sm" placeholder="Enter a favorite quote">
+                            <button id="btn-quote" class="btn btn-warning btn-sm px-3">Update</button>
+                        </div>
+                        
+                        <hr class="text-muted opacity-25">
+                        
+                        <label class="form-label fw-semibold small mb-1 mt-2">Add Friend</label>
+                        <div class="input-group mb-4 shadow-sm">
+                            <input type="text" id="input-friend" class="form-control form-control-sm" placeholder="Friend's full name">
+                            <button id="btn-add-friend" class="btn btn-success btn-sm px-3">Add</button>
+                        </div>
+                        
+                        <label class="form-label fw-semibold small mb-1">Remove Friend</label>
+                        <div class="input-group shadow-sm">
+                            <input type="text" id="input-remove-friend" class="form-control form-control-sm" placeholder="Friend's full name">
+                            <button id="btn-remove-friend" class="btn btn-danger btn-sm px-3">Remove</button>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        </main>
         
         <footer id="status-bar">
             <span id="status-message">Ready. Select a profile from the list.</span>
