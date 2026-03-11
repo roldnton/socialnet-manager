@@ -264,27 +264,33 @@ async function changeStatus() {
 
 async function changePicture() {
     if (!currentProfileId) {
-        setStatus('Error: No profile is selected.', true)
-        return
+        setStatus("Please select a profile first.", true);
+        return;
     }
-    const newPicture = document.getElementById('input-picture').value.trim()
-    if (!newPicture) {
-        setStatus('Error: Picture field is empty.', true)
-        return
+
+    const pictureInput = document.getElementById('input-picture');
+    const newPictureUrl = pictureInput.value.trim();
+
+    if (!newPictureUrl) {
+        setStatus("Please enter a valid image URL or path.", true);
+        return;
     }
+
     try {
         const { error } = await db
             .from('profiles')
-            .update({ picture: newPicture })
-            .eq('id', currentProfileId)``
+            .update({ picture: newPictureUrl })
+            .eq('id', currentProfileId);
 
-        if (error) throw error
+        if (error) throw error;
+
+        document.getElementById('profile-pic').src = newPictureUrl;
         
-        document.getElementById('profile-pic').src = newPicture
-        document.getElementById('input-picture').value = ''
-        setStatus('Picture updated.')
+        pictureInput.value = ''; 
+        setStatus("Profile picture updated successfully!");
+        
     } catch (err) {
-        setStatus(`Error updating picture: ${err.message}`, true)
+        setStatus(`Error updating picture: ${err.message}`, true);
     }
 }
 
