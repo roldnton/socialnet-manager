@@ -420,4 +420,33 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ── Initial data load ──────────────────────────────────────────
     await loadProfileList()
     setStatus('Ready. Select a profile from the list or add a new one.')
+
+    // ── Live Search / Filter Profiles ──────────────────────────────
+    document.getElementById('input-lookup').addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase().trim()
+        const profileItems = document.querySelectorAll('#profile-list .profile-item')
+        
+        profileItems.forEach(item => {
+            const name = item.textContent.toLowerCase()
+            // If the name includes what we typed, show it. Otherwise, hide it.
+            if (name.includes(searchTerm)) {
+                item.style.display = '' // Restores it to its normal visible state
+            } else {
+                item.style.display = 'none' // Hides it completely
+            }
+        })
+    })
+
+    // Pressing Enter will now automatically select the top visible result!
+    document.getElementById('input-lookup').addEventListener('keydown', e => { 
+        if (e.key === 'Enter') {
+            // Find the first profile in the list that isn't hidden
+            const firstVisibleProfile = document.querySelector('#profile-list .profile-item:not([style*="display: none"])')
+            if (firstVisibleProfile) {
+                firstVisibleProfile.click() // Simulate a click on it
+            } else {
+                setStatus('No matching profiles found to select.', true)
+            }
+        }
+    })
 })
