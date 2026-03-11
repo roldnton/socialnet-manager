@@ -1,66 +1,162 @@
 /* css/style.css */
-/* Bootstrap CSS custom property overrides */
+/* ================================================================
+   Bootstrap CSS custom property overrides & UI Variables
+================================================================ */
 :root {
+    /* Fonts */
     --font-heading: 'Source Serif 4', Georgia, serif;
     --font-body: 'DM Sans', system-ui, sans-serif;
+    
+    /* Colors */
     --clr-header-bg: #1e3a6e;
-    --clr-page-bg: #dde3ec;
-    --clr-panel-bg: #f7f8fa;
-    --clr-panel-border: #c8cdd8;
+    --clr-page-bg: #f0f4f8; /* Softer, more modern background */
+    --clr-panel-bg: #ffffff; /* Crisp white for panels */
+    --clr-panel-border: #e2e8f0;
     --clr-blue: #2456b4;
+    --clr-list-hover: #f1f5f9;
+    --clr-list-active: #2456b4;
+    --clr-status-bg: #e2e8f0;
+    --clr-status-text: #475569;
+    
+    /* Sizing & Borders */
+    --header-h: 64px;
+    --statusbar-h: 40px;
+    --radius-lg: 12px;
+    --radius-md: 8px;
 }
 
-html { scroll-behavior: smooth; }
+html, body { 
+    scroll-behavior: smooth;
+    font-family: var(--font-body);
+    background-color: var(--clr-page-bg);
+    height: 100vh;
+    margin: 0;
+    overflow: hidden; /* Prevents whole page scrolling; panels will scroll instead */
+}
 
-/* Application wrapper: full-height flex column layout */
+/* Typography Overrides */
+h1, h2, h3, h4, h5, h6, .profile-hero-name {
+    font-family: var(--font-heading);
+    color: var(--clr-header-bg);
+}
+
+/* ================================================================
+   Layout & Panels
+================================================================ */
+
+/* Header */
+#app-header {
+    height: var(--header-h);
+    background-color: var(--clr-header-bg);
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#app-header h1 {
+    font-size: 1.25rem;
+    margin: 0;
+    color: white;
+}
+
+/* Application wrapper: fits exactly between header and status bar */
 #app-wrapper {
-    height: calc(100% - var(--header-h));
+    height: calc(100vh - var(--header-h) - var(--statusbar-h));
     display: flex;
     flex-direction: column;
 }
 
 /* Panel card styling */
-.sn-panel { /* custom panel card */
+.sn-panel { 
     background: var(--clr-panel-bg);
     border: 1px solid var(--clr-panel-border);
     border-radius: var(--radius-lg);
-    padding: 1rem 1.1rem;
-    flex: 1; min-height: 0; overflow: hidden;
+    padding: 1.25rem;
+    height: 100%; 
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); /* Modern soft shadow */
 }
+
+/* ================================================================
+   Components (Images, Textboxes, Lists)
+================================================================ */
 
 /* Profile picture circular display */
 #profile-pic, .profile-thumb {
-    width: 96px;
-    height: 96px;
+    width: 120px; /* Slightly larger for center focus */
+    height: 120px;
     object-fit: cover;
+    border-radius: 50%; /* Perfect circle */
+    border: 3px solid var(--clr-page-bg);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin: 0 auto 1rem auto;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Profile picture hover effect */
 #profile-pic:hover {
     transform: scale(1.05);
-    transition: transform 0.2s ease;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 
-/* Friends list item in centre panel */
-#friends-list .friend-entry {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.9rem;
+/* Center Panel Textboxes (Status, Quote, etc.) */
+.sn-textbox {
+    background: var(--clr-page-bg);
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    color: #334155;
+    border: 1px solid var(--clr-panel-border);
+}
+
+/* Scrollable List Containers (Profiles and Friends) */
+.profile-list-box, .sn-textbox--tall {
+    flex-grow: 1;
+    overflow-y: auto;
+    border: 1px solid var(--clr-panel-border);
+    border-radius: var(--radius-md);
+    background: #ffffff;
+}
+
+/* List Items */
+.profile-item, #friends-list .friend-entry {
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--clr-panel-border);
+    transition: background-color 0.2s ease;
+}
+
+.profile-item:last-child, #friends-list .friend-entry:last-child {
+    border-bottom: none;
+}
+
+.profile-item:hover, #friends-list .friend-entry:hover {
+    background-color: var(--clr-list-hover);
 }
 
 /* Active profile highlight in left panel */
 #profile-list .profile-item.active {
     background: var(--clr-list-active);
-    border-color: var(--clr-blue);
     color: #ffffff;
+    font-weight: 500;
+    border-color: var(--clr-list-active);
 }
 
-/* Status bar at bottom */
+/* ================================================================
+   Footer / Status Bar
+================================================================ */
 #status-bar {
     background: var(--clr-status-bg);
     height: var(--statusbar-h);
-    font-size: 0.82rem;
-    font-style: italic;
+    color: var(--clr-status-text);
+    font-size: 0.85rem;
+    font-family: monospace; /* Gives it a cool terminal/system feel */
     display: flex;
     align-items: center;
-    padding: 0.5rem 1rem;
+    padding: 0 1.5rem;
+    border-top: 1px solid var(--clr-panel-border);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
