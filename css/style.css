@@ -147,6 +147,11 @@ h1, h2, h3, h4, h5, h6, .profile-hero-name {
    Footer / Status Bar
 ================================================================ */
 #status-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1050;
     background: var(--clr-status-bg);
     height: var(--statusbar-h);
     color: var(--clr-status-text);

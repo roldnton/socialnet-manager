@@ -58,7 +58,7 @@ function renderFriendsList(friends) {
         const div = document.createElement('div')
         div.className = 'friend-entry'
         div.textContent = f.name 
-        list.appendChild(div) // FIXED: Changed 'box' to 'list'
+        list.appendChild(div)
     })
 }
 
@@ -70,7 +70,7 @@ async function loadProfileList() {
     try {
         const { data, error } = await db
             .from('profiles')
-            .select('id, name')
+            .select('id, name, picture')
             .order('name', { ascending: true })
 
         if (error) throw error
@@ -85,10 +85,14 @@ async function loadProfileList() {
 
         data.forEach(profile => {
             const row = document.createElement('div')
-            row.className = 'profile-item'
+            row.className = 'profile-item d-flex align-items-center py-2 px-1'
             row.dataset.id = profile.id
-            row.textContent = profile.name // FIXED: Assigning text directly to the row
-            row.addEventListener('click', () => selectProfile(profile.id)) // FIXED: Attach listener directly to row
+            const profilePic = profile.picture || 'resources/images/default.png'
+            row.innerHTML = `
+                <img src="${profilePic}" alt="${profile.name}" class="rounded-circle shadow-sm" style="width: 35px; height: 35px; object-fit: cover; margin-right: 12px;">
+                <span class="fw-semibold text-truncate">${profile.name}</span>
+            `
+            row.addEventListener('click', () => selectProfile(profile.id))
             container.appendChild(row)
         })
     } catch (err) {
@@ -176,7 +180,7 @@ async function addProfile() {
 }
 
 async function lookUpProfile() {
-    const query = document.getElementById('input-lookup').value.trim() // FIXED: ID updated
+    const query = document.getElementById('input-lookup').value.trim()
 
     if (!query) {
         setStatus('Error: Search field is empty. Please enter a name to search.', true)
@@ -270,7 +274,7 @@ async function changePicture() {
 
     const pictureInput = document.getElementById('input-picture');
     let rawInput = pictureInput.value.trim();
-    const newPictureUrl = `resourcses/images/${rawInput}`;
+    const newPictureUrl = `resources/images/${rawInput}`;
 
     if (!newPictureUrl) {
         setStatus("Please enter a valid image URL or path.", true);
@@ -396,7 +400,7 @@ async function removeFriend() {
         setStatus('Error: No profile is selected.', true)
         return
     }
-    const friendName = document.getElementById('input-remove-friend').value.trim() // FIXED: Updated ID
+    const friendName = document.getElementById('input-remove-friend').value.trim()
     if (!friendName) {
         setStatus('Error: Friend name field is empty.', true)
         return
@@ -425,7 +429,7 @@ async function removeFriend() {
 
         if (deleteError) throw deleteError
 
-        document.getElementById('input-remove-friend').value = '' // FIXED: Updated ID
+        document.getElementById('input-remove-friend').value = ''
         await selectProfile(currentProfileId)
         setStatus(`"${found[0].name}" removed from friends list.`)
 
@@ -443,6 +447,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ── Left panel buttons ─────────────────────────────────────────
     document.getElementById('btn-add').addEventListener('click', addProfile)
     document.getElementById('btn-delete').addEventListener('click', deleteProfile)
+    document.getElementById('btn-lookup').addEventListener('click', lookUpProfile)
 
     // ── Right panel buttons ────────────────────────────────────────
     document.getElementById('btn-status').addEventListener('click', changeStatus)
@@ -474,11 +479,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         const profileItems = document.querySelectorAll('#profile-list .profile-item')
         
         profileItems.forEach(item => {
-            const name = item.textContent.toLowerCase()
+            const name = item.textContent.toLowerCase().trim()
+
             if (name.includes(searchTerm)) {
-                item.style.display = ''
+                item.classList.remove('d-none')
+                item.classList.add('d-flex')
             } else {
-                item.style.display = 'none'
+                // Remove flexbox and add Bootstrap's strict hidden class
+                item.classList.remove('d-flex')
+                item.classList.add('d-none')
             }
         })
     })
