@@ -273,8 +273,9 @@ async function changePicture() {
     }
 
     const pictureInput = document.getElementById('input-picture');
-    let rawInput = pictureInput.value.trim();
-    const newPictureUrl = `resources/images/${rawInput}`;
+    // let rawInput = pictureInput.value.trim();
+    // const newPictureUrl = `resources/images/${rawInput}`;
+    const newPictureUrl = pictureInput.value.trim();
 
     if (!newPictureUrl) {
         setStatus("Please enter a valid image URL or path.", true);
