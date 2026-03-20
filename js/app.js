@@ -36,7 +36,15 @@ function clearCentrePanel() {
 }
 
 function displayProfile(profile, friends = []) {
-    document.getElementById('profile-pic').src = profile.picture || 'resources/images/default.png'
+    const picElement = document.getElementById('profile-pic');
+    
+    // Set the image
+    picElement.src = profile.picture || 'resources/images/default.png';
+    
+    picElement.onerror = function() {
+        this.onerror = null; // Prevents an infinite loop if default.png is also missing
+        this.src = 'resources/images/default.png';
+    };
     document.getElementById('profile-name').textContent = profile.name
     document.getElementById('profile-status').textContent = profile.status || '(no status)'
     document.getElementById('profile-quote').textContent = profile.quote || '(no quote)'
@@ -89,7 +97,11 @@ async function loadProfileList() {
             row.dataset.id = profile.id
             const profilePic = profile.picture || 'resources/images/default.png'
             row.innerHTML = `
-                <img src="${profilePic}" alt="${profile.name}" class="rounded-circle shadow-sm" style="width: 35px; height: 35px; object-fit: cover; margin-right: 12px;">
+                <img src="${profilePic}" 
+                     alt="${profile.name}" 
+                     onerror="this.onerror=null; this.src='resources/images/default.png';" 
+                     class="rounded-circle shadow-sm" 
+                     style="width: 35px; height: 35px; object-fit: cover; margin-right: 12px;">
                 <span class="fw-semibold text-truncate">${profile.name}</span>
             `
             row.addEventListener('click', () => selectProfile(profile.id))
