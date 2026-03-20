@@ -287,25 +287,59 @@ async function changePicture() {
     const pictureInput = document.getElementById('input-picture');
     // let rawInput = pictureInput.value.trim();
     // const newPictureUrl = `resources/images/${rawInput}`;
-    const newPictureUrl = pictureInput.value.trim();
+    const file = pictureInput.files[0]; // Grab the actual file from the input
 
-    if (!newPictureUrl) {
-        setStatus("Please enter a valid image URL or path.", true);
+    if (!file) {
+        setStatus("Please select an image file from your computer.", true);
         return;
     }
 
     try {
-        const { error } = await db
+        // Step 1: Upload to Vercel Blob
+        setStatus("⏳ Uploading image...");
+        
+        // Security Warning vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+        const BLOB_TOKEN = "vercel_blob_rw_yAyyB4GE4rEOhScU_6rFa9RIftwHZpTpRscMp4HdTuiwQyb"; 
+        
+        // Create a unique filename
+        const safeName = file.name.toLowerCase().replace(/\s+/g, '_');
+        const filename = `avatars/${Date.now()}_${safeName}`;
+        
+        // Send the file to Vercel's API
+        const uploadResponse = await fetch(`https://blob.vercel-storage.com/${filename}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${BLOB_TOKEN}`,
+                'x-api-version': '7', 
+            },
+            body: file
+        });
+
+        if (!uploadResponse.ok) {
+            throw new Error("Failed to upload image to Vercel.");
+        }
+
+        // Get the new live URL from Vercel's response
+        const blobData = await uploadResponse.json();
+        const newPictureUrl = blobData.url;
+
+        // Step 2: Save the new URL to Supabase
+        setStatus("⏳ Image uploaded! Saving to database...");
+
+        const { error: dbError } = await db
             .from('profiles')
             .update({ picture: newPictureUrl })
             .eq('id', currentProfileId);
 
-        if (error) throw error;
+        if (dbError) throw dbError;
 
+        // Step 3: Update the UI
         document.getElementById('profile-pic').src = newPictureUrl;
+        pictureInput.value = ''; // Clear the file picker
+        setStatus("✅ Profile picture updated successfully!");
         
-        pictureInput.value = ''; 
-        setStatus("Profile picture updated successfully!");
+        // Refresh the left panel so the mini-avatar updates too!
+        await loadProfileList(); 
         
     } catch (err) {
         setStatus(`Error updating picture: ${err.message}`, true);
