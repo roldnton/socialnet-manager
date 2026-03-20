@@ -40,11 +40,11 @@
                         <label for="input-lookup" class="form-label fw-semibold small mb-1">Search Profiles</label>
                         <div class="input-group mb-3 shadow-sm">
                             <input type="text" id="input-lookup" class="form-control form-control-sm" placeholder="Filter by name...">
-                            <button id="btn-lookup" class="btn btn-outline-secondary btn-sm px-3">Search</button>
+                            <!-- <button id="btn-lookup" class="btn btn-outline-secondary btn-sm px-3">Search</button> -->
                         </div>
                         
                         <p class="small fw-semibold text-muted mb-1 mt-2">All Profiles</p>
-                        <div id="profile-list" class="profile-list-box mb-3 shadow-sm flex-grow-1"></div>
+                        <div id="profile-list" class="profile-list-box mb-3 shadow-sm flex-grow-1 overflow-y-auto" style="max-height: 350px;"></div>
                         
                         <button id="btn-delete" class="btn btn-danger btn-sm w-100 shadow-sm fw-bold">
                             Delete Selected Profile

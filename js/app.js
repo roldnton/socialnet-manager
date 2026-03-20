@@ -18,12 +18,20 @@ let currentProfileId = null
 // Section 3: Helper Functions
 // ================================================================
 
-function setStatus(message, isError = false) {
+function setStatus(message, isError = false, isSuccess = false) {
     const bar = document.getElementById('status-message')
     const footer = document.getElementById('status-bar')
     bar.textContent = message
-    footer.style.background = isError ? '#6b1a1a' : 'var(--clr-status-bg)'
-    footer.style.color = isError ? '#ffcccc' : 'var(--clr-status-text)'
+    if (isError) {
+        footer.style.background = '#6b1a1a' // Dark Red
+        footer.style.color = '#ffcccc'
+    } else if (isSuccess) {
+        footer.style.background = '#198754' // Bootstrap Success Green
+        footer.style.color = '#ffffff'
+    } else {
+        footer.style.background = 'var(--clr-status-bg)' // Default
+        footer.style.color = 'var(--clr-status-text)'
+    }
 }
 
 function clearCentrePanel() {
@@ -158,7 +166,8 @@ async function selectProfile(profileId) {
 
 async function addProfile() {
     const nameInput = document.getElementById('input-name')
-    const name = nameInput.value.trim()
+    const rawName = nameInput.value.trim();
+    const name = formatName(rawName);
 
     if (!name) {
         setStatus('Error: Name field is empty. Please enter a name.', true)
@@ -296,7 +305,7 @@ async function changePicture() {
 
     try {
         // Step 1: Upload to Vercel Blob
-        setStatus("⏳ Uploading image...");
+        setStatus("⏳ Uploading image...", false, true);
         
         // Security Warning vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
         const BLOB_TOKEN = "vercel_blob_rw_yAyyB4GE4rEOhScU_6rFa9RIftwHZpTpRscMp4HdTuiwQyb"; 
@@ -324,7 +333,7 @@ async function changePicture() {
         const newPictureUrl = blobData.url;
 
         // Step 2: Save the new URL to Supabase
-        setStatus("⏳ Image uploaded! Saving to database...");
+        setStatus("⏳ Image uploaded! Saving to database...", false, true);
 
         const { error: dbError } = await db
             .from('profiles')
@@ -442,6 +451,21 @@ async function addFriend() {
     }
 }
 
+function formatName(name) {
+    if (!name) return ''; 
+    
+    // Step 1: Split the full name into individual words by spaces
+    return name.split(' ').map(word => {
+        
+        // Step 2: Split each word by dashes (just in case it has one)
+        return word.split('-').map(part => {
+            // Step 3: Capitalize the first letter of the part, lowercase the rest
+            return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+        }).join('-'); // Glue the dashed parts back together with a dash
+        
+    }).join(' '); // Glue the separate words back together with a space
+}
+
 async function removeFriend() {
     if (!currentProfileId) {
         setStatus('Error: No profile is selected.', true)
@@ -494,7 +518,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // ── Left panel buttons ─────────────────────────────────────────
     document.getElementById('btn-add').addEventListener('click', addProfile)
     document.getElementById('btn-delete').addEventListener('click', deleteProfile)
-    document.getElementById('btn-lookup').addEventListener('click', lookUpProfile)
+    //document.getElementById('btn-lookup').addEventListener('click', lookUpProfile)
 
     // ── Right panel buttons ────────────────────────────────────────
     document.getElementById('btn-status').addEventListener('click', changeStatus)
