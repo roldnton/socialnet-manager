@@ -319,7 +319,7 @@ async function changePicture() {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${BLOB_TOKEN}`,
-                'x-api-version': '7', 
+                'x-api-version': '7',   
             },
             body: file
         });
@@ -532,10 +532,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (e.key === 'Enter') addProfile()
     })
 
-    document.getElementById('input-lookup').addEventListener('keydown', e => { 
-        if (e.key === 'Enter') lookUpProfile() 
-    })
-
     document.getElementById('input-status').addEventListener('keydown', e => { 
         if (e.key === 'Enter') changeStatus()
     })
@@ -565,7 +561,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('input-lookup').addEventListener('keydown', e => { 
         if (e.key === 'Enter') {
-            const firstVisibleProfile = document.querySelector('#profile-list .profile-item:not([style*="display: none"])')
+            e.preventDefault()
+            const firstVisibleProfile = document.querySelector('#profile-list .profile-item:not(.d-none)')
             if (firstVisibleProfile) {
                 firstVisibleProfile.click()
             } else {
